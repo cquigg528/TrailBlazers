@@ -15,5 +15,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="ojdbc8" level="application" />
+
   </component>
 </module>
