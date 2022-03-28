@@ -5,6 +5,9 @@ import delegates.LoginWindowDelegate;
 import delegates.TrailOperationsDelegate;
 import model.TrailModel;
 import ui.LoginWindow;
+import ui.TrailOperationsWindow;
+
+import java.util.ArrayList;
 
 /**
  * Main controller class.  Based on cs304 JavaDemo
@@ -34,9 +37,9 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
 
-//            TerminalTransactions transaction = new TerminalTransactions();
-//            transaction.setupDatabase(this);
-//            transaction.showMainMenu(this);
+            TrailOperationsWindow operationsWindow = new TrailOperationsWindow();
+            operationsWindow.setupDatabase(this);
+            operationsWindow.showFrame(this);
         } else {
             loginWindow.handleLoginFailed();
 
@@ -54,6 +57,10 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
 
     public void databaseSetup() {
         dbHandler.databaseSetup();
+    }
+
+    public ArrayList<String> showTrailInfo() {
+        return dbHandler.getTrailInfo();
     }
 
     /**

@@ -5,18 +5,18 @@ package model;
  */
 public class TrailModel {
     private int trailId;
-    private double elevationGain;
     private String trailName;
-    private int trailRating;
-    private double trailDistance;
     private int trailDifficulty;
+    private double trailDistance;
+    private double elevationGain;
 
-    public TrailModel(int trailId, double elevationGain, String trailName, int trailRating,
-                      double trailDistance, int trailDifficulty) {
+
+
+    public TrailModel(int trailId, String trailName, double trailDistance,
+                       int trailDifficulty, double elevationGain) {
         this.trailId = trailId;
         this.elevationGain = elevationGain;
         this.trailName = trailName;
-        this.trailRating = trailRating;
         this.trailDistance = trailDistance;
         this.trailDifficulty = trailDifficulty;
     }
@@ -31,10 +31,6 @@ public class TrailModel {
 
     public String getTrailName() {
         return this.trailName;
-    }
-
-    public int getTrailRating() {
-        return this.trailRating;
     }
 
     public double getTrailDistance() {
