@@ -1,3 +1,6 @@
+package database;
+
+import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -6,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import ca.ubc.cs304.model.BranchModel;
 
 /**
  * This class handles all database related transactions
@@ -39,6 +41,16 @@ public class DatabaseConnectionHandler {
             if (connection != null) {
                 connection.close();
             }
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+    }
+
+    public void databaseSetup() {
+        try {
+            Statement statement = connection.createStatement();
+//            statement.executeUpdate()
+
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
