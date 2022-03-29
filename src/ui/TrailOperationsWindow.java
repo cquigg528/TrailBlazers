@@ -126,8 +126,11 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     }
 
     public void handleDelete() {
-        int trailId = Integer.parseInt(deleteTrailIdField.getText());
-        delegate.deleteTrail(trailId);
+        String input = deleteTrailIdField.getText();
+        if (input != "") {
+            int trailId = Integer.parseInt(input);
+            delegate.deleteTrail(trailId);
+        }
     }
 
     /**
