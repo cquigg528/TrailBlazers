@@ -9,14 +9,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
  * This class is responsible for the main trail operations  GUI and handing
  * user queries
  */
+@SuppressWarnings("DuplicatedCode")
 public class TrailOperationsWindow extends JFrame implements ActionListener {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
@@ -25,6 +24,11 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     private BufferedReader bufferedReader = null;
     private TrailOperationsDelegate delegate = null;
+
+    JButton showContentsButton;
+    JButton deleteTrailButton;
+    JLabel deleteTrailLabel;
+    JTextField deleteTrailIdField;
 
     public TrailOperationsWindow() {
         super("Damn you cute and sessy");
@@ -43,25 +47,51 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     public void showFrame(TrailOperationsDelegate delegate) {
         this.delegate = delegate;
 
-        JButton showContentsButton = new JButton("Show current trails");
         JPanel contentPane = new JPanel();
         this.setContentPane(contentPane);
+
+        showContentsButton = new JButton("Show current trails");
+        deleteTrailButton = new JButton("Delete trail");
+        deleteTrailLabel = new JLabel("Enter id of trail to delete: ");
+        deleteTrailIdField = new JTextField(10);
+
 
         // layout components using the GridBag layout manager
         GridBagLayout gb = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
 
         contentPane.setLayout(gb);
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // place the show contents button
-        c.gridwidth = GridBagConstraints.FIRST_LINE_START;
+        c.gridwidth = GridBagConstraints.PAGE_START;
         c.insets = new Insets(5, 10, 10, 10);
-//        c.anchor = GridBagConstraints.CENTER;
         gb.setConstraints(showContentsButton, c);
         contentPane.add(showContentsButton);
 
+        // place delete trail label
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(10, 10, 5, 0);
+        gb.setConstraints(deleteTrailLabel, c);
+        contentPane.add(deleteTrailLabel);
+
+        // place delete label field
+        // place the text field for the username
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(10, 0, 5, 10);
+        gb.setConstraints(deleteTrailIdField, c);
+        contentPane.add(deleteTrailIdField);
+
+        // place the delete button
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(5, 10, 10, 10);
+        c.anchor = GridBagConstraints.CENTER;
+        gb.setConstraints(deleteTrailButton, c);
+        contentPane.add(deleteTrailButton);
+
         showContentsButton.addActionListener(this);
+        deleteTrailButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -82,7 +112,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    public void showContent() {
+    public void showDatabaseContent() {
         System.out.println("made it here!");
         ArrayList<String> contentList = delegate.showTrailInfo();
         System.out.println(contentList);
@@ -95,12 +125,25 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(dialogueFrame, printString);
     }
 
+    public void handleDelete() {
+        int trailId = Integer.parseInt(deleteTrailIdField.getText());
+        delegate.deleteTrail(trailId);
+    }
+
     /**
      * ActionListener Methods
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        showContent();
+        String actionCommand = e.getActionCommand();
+        switch (actionCommand) {
+            case "Show current trails":
+                showDatabaseContent();
+            case "Delete trail":
+                handleDelete();
+            default:
+                break;
+        }
     }
 
 
