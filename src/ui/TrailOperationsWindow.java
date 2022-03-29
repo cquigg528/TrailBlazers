@@ -1,6 +1,8 @@
 package ui;
 
 import delegates.TrailOperationsDelegate;
+import jdk.nashorn.internal.scripts.JO;
+import sun.tools.jconsole.inspector.XObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +29,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     JButton showContentsButton;
     JButton deleteTrailButton;
+    JButton selectButton;
     JLabel deleteTrailLabel;
     JTextField deleteTrailIdField;
 
@@ -51,9 +54,12 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         this.setContentPane(contentPane);
 
         showContentsButton = new JButton("Show current trails");
+
         deleteTrailButton = new JButton("Delete trail");
         deleteTrailLabel = new JLabel("Enter id of trail to delete: ");
         deleteTrailIdField = new JTextField(10);
+
+        selectButton = new JButton("Perform a selection");
 
 
         // layout components using the GridBag layout manager
@@ -90,8 +96,15 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(deleteTrailButton, c);
         contentPane.add(deleteTrailButton);
 
+        // place select button
+        c.gridwidth = GridBagConstraints.PAGE_START;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(selectButton, c);
+        contentPane.add(selectButton);
+
         showContentsButton.addActionListener(this);
         deleteTrailButton.addActionListener(this);
+        selectButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -133,6 +146,23 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         }
     }
 
+    public void handleSelection() {
+        Object[] tables = {"trails", "campsites"};
+        Object[] fields = {"difficulty", "distance", "elevation gain"};
+        Object[] comparators = {">", ">=", "==", "!=", "<", "<="};
+        JFrame selectionFrame = new JFrame("Selection");
+
+        String table = (String) JOptionPane.showInputDialog(
+                selectionFrame,
+                "SELECT ",
+                "title",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                tables,
+                "pick a table"
+        );
+    }
+
     /**
      * ActionListener Methods
      */
@@ -144,6 +174,8 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
                 showDatabaseContent();
             case "Delete trail":
                 handleDelete();
+            case "Perform a selection":
+                handleSelection();
             default:
                 break;
         }
