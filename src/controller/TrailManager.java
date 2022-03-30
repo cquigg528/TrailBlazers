@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegate {
     private DatabaseConnectionHandler dbHandler = null;
     private LoginWindow loginWindow = null;
+    private TrailOperationsWindow operationsWindow = null;
 
     public TrailManager() {
         dbHandler = new DatabaseConnectionHandler();
@@ -37,7 +38,6 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
 
-            TrailOperationsWindow operationsWindow = new TrailOperationsWindow();
             operationsWindow.setupDatabase(this);
             operationsWindow.showFrame(this);
         } else {
@@ -61,6 +61,13 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
 
     public ArrayList<String> showTrailInfo() {
         return dbHandler.getTrailInfo();
+    }
+
+    @Override
+    public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value) {
+        ArrayList<String> results = dbHandler.performSelection(selectAttribute,whereAttribute, comparator, value);
+        operationsWindow.displaySearchResults(results);
+
     }
 
     /**

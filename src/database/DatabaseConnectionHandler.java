@@ -2,7 +2,6 @@ package database;
 
 import model.TrailModel;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -119,7 +118,7 @@ public class DatabaseConnectionHandler {
 
 //            System.out.println(tempResult);
 
-            result = translateModelsToStrings(tempResult);
+            result = translateTrailModelsToStrings(tempResult);
 
             rs.close();
             stmt.close();
@@ -130,7 +129,41 @@ public class DatabaseConnectionHandler {
         return result;
     }
 
-    public ArrayList<String> translateModelsToStrings(ArrayList<TrailModel> models) {
+    public ArrayList<String> performSelection(String selectAttribute, String whereAttribute,
+                                              String comparator, String value) {
+
+        ArrayList<TrailModel> tempResult = new ArrayList<>();
+
+        String sqlString = "SELECT _scolumn FROM trail WHERE _wcolumn _op _value";
+        sqlString = sqlString.replace("_scolumn", selectAttribute);
+        sqlString = sqlString.replace("_wcolumn", whereAttribute);
+        sqlString = sqlString.replace("_op", comparator);
+        sqlString = sqlString.replace("_value", value);
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlString);
+
+            while (rs.next()) {
+                TrailModel model = new TrailModel(rs.getInt("trail_id"),
+                        rs.getString("trail_name"),
+                        rs.getDouble("trail_distance"),
+                        rs.getInt("trail_difficulty"),
+                        rs.getDouble("elevation_gain"));
+                tempResult.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+        return translateTrailModelsToStrings(tempResult);
+    }
+
+    public ArrayList<String> translateTrailModelsToStrings(ArrayList<TrailModel> models) {
 
         ArrayList<String> result = new ArrayList<>();
 
