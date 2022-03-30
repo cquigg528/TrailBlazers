@@ -140,27 +140,85 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void handleDelete() {
         String input = deleteTrailIdField.getText();
-        if (input != "") {
+        if (!input.equals("")) {
             int trailId = Integer.parseInt(input);
             delegate.deleteTrail(trailId);
         }
     }
 
     public void handleSelection() {
-        Object[] tables = {"trails", "campsites"};
-        Object[] fields = {"difficulty", "distance", "elevation gain"};
-        Object[] comparators = {">", ">=", "==", "!=", "<", "<="};
-        JFrame selectionFrame = new JFrame("Selection");
+        JLabel selectLabel = new JLabel("SELECT ");
+        JLabel fromLabel = new JLabel("FROM              Trail");
+        JLabel whereLabel = new JLabel("WHERE ");
 
-        String table = (String) JOptionPane.showInputDialog(
-                selectionFrame,
-                "SELECT ",
-                "title",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                tables,
-                "pick a table"
-        );
+
+        String[] fields = {"difficulty", "distance", "elevation gain"};
+        String[] comparators = {">", ">=", "==", "!=", "<", "<="};
+        JComboBox<String> fieldsDropDownSelect = new JComboBox<String>(fields);
+        JComboBox<String> fieldsDropDownWhere = new JComboBox<String>(fields);
+        JComboBox<String> comparatorDropDown = new JComboBox<String>(comparators);
+        JTextField conditionInput = new JTextField();
+
+
+        JFrame selectionFrame = new JFrame("Selection");
+        Dimension screenSize = new Dimension(500, 350);
+
+
+        JPanel selectionPanel = new JPanel();
+
+        selectionFrame.add(selectionPanel);
+
+        selectionPanel.setLayout(null);
+
+        selectionPanel.add(selectLabel);
+        selectionPanel.add(fieldsDropDownSelect);
+        selectionPanel.add(fromLabel);
+        selectionPanel.add(whereLabel);
+        selectionPanel.add(fieldsDropDownWhere);
+        selectionPanel.add(comparatorDropDown);
+        selectionPanel.add(conditionInput);
+
+        Insets insets = conditionInput.getInsets();
+        Dimension size = selectLabel.getPreferredSize();
+        selectLabel.setBounds(5 + insets.left, 5 + insets.top,
+                size.width, size.height);
+
+        size = fieldsDropDownSelect.getPreferredSize();
+        fieldsDropDownSelect.setBounds(85 + insets.left, 2 + insets.top,
+                size.width, size.height);
+
+        size = fromLabel.getPreferredSize();
+        fromLabel.setBounds(5 + insets.left, 40 + insets.top,
+                size.width, size.height);
+
+        size = whereLabel.getPreferredSize();
+        whereLabel.setBounds(5 + insets.left, 75 + insets.top,
+                size.width, size.height);
+
+        size = fieldsDropDownWhere.getPreferredSize();
+        fieldsDropDownWhere.setBounds(85 + insets.left, 72 + insets.top,
+                size.width, size.height);
+
+        size = comparatorDropDown.getPreferredSize();
+        comparatorDropDown.setBounds(85 + insets.left, 95 + insets.top,
+                size.width, size.height);
+
+        size = conditionInput.getPreferredSize();
+        conditionInput.setBounds(85 + insets.left, 117 + insets.top,
+                40+ size.width, size.height);
+
+        // center the frame
+        Dimension d = selectionFrame.getToolkit().getScreenSize();
+        Rectangle r = selectionFrame.getBounds();
+        selectionFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+
+        selectionFrame.pack();
+        selectionFrame.setVisible(true);
+        selectionFrame.setResizable(true);
+        selectionFrame.setPreferredSize(screenSize);
+        selectionFrame.setMinimumSize(screenSize);
+        selectionFrame.setMaximumSize(screenSize);
+
     }
 
     /**
