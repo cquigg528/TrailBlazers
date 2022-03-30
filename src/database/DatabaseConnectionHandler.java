@@ -117,7 +117,7 @@ public class DatabaseConnectionHandler {
                 tempResult.add(model);
             }
 
-            System.out.println(tempResult);
+//            System.out.println(tempResult);
 
             result = translateModelsToStrings(tempResult);
 
@@ -147,7 +147,7 @@ public class DatabaseConnectionHandler {
 
     public void deleteTrail(int trailId) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM trails WHERE trail_id = ?");
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM trail WHERE trail_id = ?");
             ps.setInt(1, trailId);
 
             int rowCount = ps.executeUpdate();
@@ -159,6 +159,7 @@ public class DatabaseConnectionHandler {
 
             ps.close();
         } catch (SQLException e) {
+            System.out.println("this is the problem");
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
