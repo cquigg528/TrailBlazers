@@ -3,7 +3,6 @@ package controller;
 import database.DatabaseConnectionHandler;
 import delegates.LoginWindowDelegate;
 import delegates.TrailOperationsDelegate;
-import model.TrailModel;
 import ui.LoginWindow;
 import ui.TrailOperationsWindow;
 

@@ -1,6 +1,8 @@
 package database;
 
+import model.LakeModel;
 import model.TrailModel;
+import model.ConnectsToModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -64,17 +66,59 @@ public class DatabaseConnectionHandler {
 
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) not null, trail_difficulty integer, trail_distance real, trail_elevation_gain real)");
+            statement.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) " +
+                    "not null, trail_difficulty integer, trail_distance real, trail_elevation_gain real)");
             statement.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
-        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 3, 1200);
-        insertTrail(trail1);
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("CREATE TABLE lake (lake_name varchar2(20) not null PRIMARY KEY, swimmable bool");
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
 
-        TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 6, 5500);
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("CREATE TABLE connects_to (trail_id integer not null, lake_name varchar2(20) " +
+                    "PRIMARY KEY (trail_id, lake_name), FOREIGN KEY (lake_name) references lake," +
+                    "FOREIGN KEY (trail_id) references trail)");
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 3,
+                1200);
+        TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 6,
+                5500);
+        TrailModel trail3 = new TrailModel(3, "Bear Trail", 9.5, 2,
+                2000);
+
+        LakeModel lake1 = new LakeModel("Great Bear Lake", true);
+        LakeModel lake2 = new LakeModel("Williams Lake", true);
+        LakeModel lake3 = new LakeModel("Ontario", false);
+
+        ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
+        ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
+        ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
+        ConnectsToModel connects4 = new ConnectsToModel(1, "Ontario");
+
+        insertTrail(trail1);
         insertTrail(trail2);
+        insertTrail(trail3);
+
+        insertLake(lake1);
+        insertLake(lake2);
+        insertLake(lake3);
+
+        insertConnectsTo(connects1);
+        insertConnectsTo(connects2);
+        insertConnectsTo(connects3);
+        insertConnectsTo(connects4);
 
     }
 
@@ -86,6 +130,38 @@ public class DatabaseConnectionHandler {
             ps.setInt(3, model.getTrailDifficulty());
             ps.setDouble(4, model.getTrailDistance());
             ps.setDouble(5, model.getElevationGain());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void insertLake(LakeModel model) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO lake VALUES (?,?)");
+            ps.setString(1, model.getLakeName());
+            ps.setBoolean(2, model.getSwimmable());
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public void insertConnectsTo(ConnectsToModel model) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO lake VALUES (?,?)");
+            ps.setInt(1, model.getConnectsToTrailId());
+            ps.setString(2, model.getConnectsToLakeName());
 
             ps.executeUpdate();
             connection.commit();
