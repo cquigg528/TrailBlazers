@@ -63,6 +63,14 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
         return dbHandler.getTrailInfo();
     }
 
+    public ArrayList<String> showLakeInfo() {
+        return dbHandler.getLakeInfo();
+    }
+
+    public ArrayList<String> showConnectionInfo() {
+        return dbHandler.getConnectionInfo();
+    }
+
     @Override
     public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value) {
         ArrayList<String> results = dbHandler.performSelection(selectAttribute,whereAttribute, comparator, value);

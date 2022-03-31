@@ -100,22 +100,21 @@ public class DatabaseConnectionHandler {
         LakeModel lake2 = new LakeModel("Williams Lake", 1);
         LakeModel lake3 = new LakeModel("Ontario", 0);
 
-//        ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
-//        ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
-//        ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
+        ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
+        ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
+        ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
 
         insertTrail(trail1);
         insertTrail(trail2);
         insertTrail(trail3);
 
-//        insertLake(lake1);
-//        insertLake(lake2);
-//        insertLake(lake3);
+        insertLake(lake1);
+        insertLake(lake2);
+        insertLake(lake3);
 
-//        insertConnectsTo(connects1);
-//        insertConnectsTo(connects2);
-//        insertConnectsTo(connects3);
-//        insertConnectsTo(connects4);
+        insertConnectsTo(connects1);
+        insertConnectsTo(connects2);
+        insertConnectsTo(connects3);
 
     }
 
@@ -145,12 +144,8 @@ public class DatabaseConnectionHandler {
             ps.setString(1, model.getLakeName());
             ps.setInt(2, model.getSwimmable());
 
-            System.out.println("problem before execute update");
             ps.executeUpdate();
-            System.out.println("problem before commit");
-
             connection.commit();
-            System.out.println("problem after commit");
 
 
             ps.close();
@@ -196,10 +191,55 @@ public class DatabaseConnectionHandler {
                                                   rs.getDouble("trail_elevation_gain"));
                 tempResult.add(model);
             }
-
-//            System.out.println(tempResult);
-
             result = translateTrailModelsToStrings(tempResult);
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            result.add(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result;
+    }
+
+    public ArrayList<String> getLakeInfo() {
+        ArrayList<LakeModel> tempResult = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM lake");
+
+            while (rs.next()) {
+                LakeModel model = new LakeModel(rs.getString("lake_name"),
+                        rs.getInt("swimmable"));
+                tempResult.add(model);
+            }
+            result = translateLakeModelsToStrings(tempResult);
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            result.add(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result;
+    }
+
+    public ArrayList<String> getConnectionInfo() {
+        ArrayList<ConnectsToModel> tempResult = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM connects_to");
+
+            while (rs.next()) {
+                ConnectsToModel model = new ConnectsToModel(rs.getInt("trail_id"),
+                        rs.getString("lake_name"));
+                tempResult.add(model);
+            }
+            result = translateConnectsToModelsToStrings(tempResult);
 
             rs.close();
             stmt.close();
@@ -274,6 +314,36 @@ public class DatabaseConnectionHandler {
 
             modelString += "trail_id:          "+ model.getTrailId() + "\n" + "trail_name:      " + model.getTrailName() + "\n" + "trail_difficulty: " + model.getTrailDifficulty() + "\n"
                   + "trail_distance:  " + model.getTrailDistance() + "\n" + "elevation_gain: " + model.getElevationGain();
+
+            result.add(modelString);
+        }
+        return result;
+    }
+
+    public ArrayList<String> translateLakeModelsToStrings(ArrayList<LakeModel> models) {
+
+        ArrayList<String> result = new ArrayList<>();
+
+        for (LakeModel model : models) {
+            String modelString = "";
+
+            String swimmable = model.getSwimmable() == 1? "YES" : "NO";
+
+            modelString += "lake_name:   " + model.getLakeName() + "\n" + "swimmable: " + swimmable;
+
+            result.add(modelString);
+        }
+        return result;
+    }
+
+    public ArrayList<String> translateConnectsToModelsToStrings(ArrayList<ConnectsToModel> models) {
+
+        ArrayList<String> result = new ArrayList<>();
+
+        for (ConnectsToModel model : models) {
+            String modelString = "";
+
+            modelString += "trail_id:  " + model.getConnectsToTrailId()  + "\n" + "lake_name:   "+ model.getConnectsToLakeName();
 
             result.add(modelString);
         }

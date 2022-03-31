@@ -10,8 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class is responsible for the main trail operations  GUI and handing
@@ -27,7 +25,9 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private BufferedReader bufferedReader = null;
     private TrailOperationsDelegate delegate = null;
 
-    JButton showContentsButton;
+    JButton showLakesButton;
+    JButton showConnectsToButton;
+    JButton showTrailsButton;
     JButton deleteTrailButton;
     JButton selectButton;
     JButton joinButton;
@@ -59,7 +59,9 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         JPanel contentPane = new JPanel();
         this.setContentPane(contentPane);
 
-        showContentsButton = new JButton("Show current trails");
+        showTrailsButton = new JButton("Show current trails");
+        showLakesButton = new JButton("Show current lakes");
+        showConnectsToButton = new JButton("Show connections");
 
         deleteTrailButton = new JButton("Delete trail");
         deleteTrailLabel = new JLabel("Enter id of trail to delete: ");
@@ -77,11 +79,23 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         contentPane.setLayout(gb);
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // place the show contents button
+        // place the show trail button
         c.gridwidth = GridBagConstraints.PAGE_START;
         c.insets = new Insets(5, 10, 10, 10);
-        gb.setConstraints(showContentsButton, c);
-        contentPane.add(showContentsButton);
+        gb.setConstraints(showTrailsButton, c);
+        contentPane.add(showTrailsButton);
+
+        // place the show lake button
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(showLakesButton, c);
+        contentPane.add(showLakesButton);
+
+        // place the show connections button
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(showConnectsToButton, c);
+        contentPane.add(showConnectsToButton);
 
         // place delete trail label
         c.gridwidth = GridBagConstraints.RELATIVE;
@@ -115,7 +129,9 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(joinButton, c);
         contentPane.add(joinButton);
 
-        showContentsButton.addActionListener(this);
+        showLakesButton.addActionListener(this);
+        showConnectsToButton.addActionListener(this);
+        showTrailsButton.addActionListener(this);
         deleteTrailButton.addActionListener(this);
         selectButton.addActionListener(this);
         joinButton.addActionListener(this);
@@ -139,14 +155,36 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
-    public void showDatabaseContent() {
+    public void showTrails() {
         ArrayList<String> contentList = delegate.showTrailInfo();
         String printString = "";
         for (String string : contentList ) {
             printString += string + "\n\n";
         }
 
-        JFrame dialogueFrame = new JFrame("Database Contents");
+        JFrame dialogueFrame = new JFrame("Trails");
+        JOptionPane.showMessageDialog(dialogueFrame, printString);
+    }
+
+    public void showLakes() {
+        ArrayList<String> contentList = delegate.showLakeInfo();
+        String printString = "";
+        for (String string : contentList ) {
+            printString += string + "\n\n";
+        }
+
+        JFrame dialogueFrame = new JFrame("Lakes");
+        JOptionPane.showMessageDialog(dialogueFrame, printString);
+    }
+
+    public void showConnections() {
+        ArrayList<String> contentList = delegate.showConnectionInfo();
+        String printString = "";
+        for (String string : contentList ) {
+            printString += string + "\n\n";
+        }
+
+        JFrame dialogueFrame = new JFrame("Connects_to");
         JOptionPane.showMessageDialog(dialogueFrame, printString);
     }
 
@@ -276,18 +314,25 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case "Show current trails":
-                showDatabaseContent();
+                showTrails();
                 break;
             case "Delete trail":
                 handleDelete();
                 break;
-            case "Perform a selection or projection":
+            case "Perform a projection or selection":
                 showSelectionWindow();
                 break;
             case "Run query":
                 handleSelectionSearch();
                 break;
+            case "Show current lakes":
+                showLakes();
+                break;
+            case "Show connections":
+                showConnections();
+                break;
             case "Perform a join query":
+                // TODO!!!
                 break;
             default:
                 break;
