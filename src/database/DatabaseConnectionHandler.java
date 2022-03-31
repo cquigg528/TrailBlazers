@@ -20,7 +20,7 @@ public class DatabaseConnectionHandler {
     private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
-    public Double result = 0.0;
+    public int result = 0;
 
     private Connection connection = null;
 
@@ -270,18 +270,19 @@ public class DatabaseConnectionHandler {
 
     public String performAggregation() {
         ResultSet rs = null;
+        Double result1 = 0.0;
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT MAX(trail_distance) as MD FROM trail");
             rs = ps.executeQuery();
             rs.next();
-            result = rs.getDouble("MD");
+            result1 = rs.getDouble("MD");
             connection.commit();
             ps.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return result.toString();
+        return result1.toString();
     }
 
     public String performNestedAggregation() {
@@ -292,8 +293,8 @@ public class DatabaseConnectionHandler {
                     "HAVING MAX(t0.trail_elevation_gain) <= all (SELECT MAX(t1.trail_elevation_gain) FROM trail t1 GROUP BY t1.trail_difficulty)");
             rs = ps.executeQuery();
             while (rs.next()) {
-                result = rs.getDouble("TD");
-                result_string += ", " + result.toString();
+                result = rs.getInt("TD");
+                result_string += ", " + String.valueOf(result);
             }
             connection.commit();
             ps.close();

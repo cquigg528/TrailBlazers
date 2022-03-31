@@ -317,6 +317,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Perform a join query":
                 break;
             case "Perform a simple aggregation query":
+
                 handleAggregationquery();
                 break;
             case "Perform a nested aggregation query":
@@ -329,11 +330,23 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void displayAggregateResults(String result) {
         JFrame dialogueFrame = new JFrame("Search Results");
-        JOptionPane.showMessageDialog(dialogueFrame, "The longest distance of any trail is: "+ result);
+        JOptionPane.showMessageDialog(dialogueFrame, "Query: " +
+                "\n SELECT MAX(trail_distance) " +
+                "\n FROM trail" +
+                "\n\n Result: " +
+                "\nThe longest distance of any trail is: "+ result);
     }
     public void displayNestedAggregateResults(String result) {
         JFrame dialogueFrame = new JFrame("Search Results");
-        JOptionPane.showMessageDialog(dialogueFrame, "The highest difficulty rating(s) where the highest elevation gain" +
-                "is the minimum over all difficulties is/are: "+ result);
+        JOptionPane.showMessageDialog(dialogueFrame, "Query: " +
+                "\n" +
+                 "SELECT MAX(t0.trail_difficulty)" +
+                        "\n FROM trail t0 " +
+                        "\n GROUP BY t0.trail_difficulty" +
+                        "\n HAVING MAX(t0.trail_elevation_gain) <= all (SELECT MAX(t1.trail_elevation_gain) " +
+                        "\n\t\tFROM trail t1 " +
+                        "\n\t\tGROUP BY t1.trail_difficulty) " +
+                "\n\n Result: \n The highest difficulty rating(s) where the highest elevation gain" +
+                " is the minimum over all difficulties is/are: "+ result);
     }
 }
