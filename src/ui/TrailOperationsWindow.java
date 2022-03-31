@@ -30,6 +30,8 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     JButton showContentsButton;
     JButton deleteTrailButton;
     JButton selectButton;
+    JButton joinButton;
+
     JLabel deleteTrailLabel;
     JTextField deleteTrailIdField;
     private JComboBox<String> fieldsDropDownSelect;
@@ -63,7 +65,8 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         deleteTrailLabel = new JLabel("Enter id of trail to delete: ");
         deleteTrailIdField = new JTextField(10);
 
-        selectButton = new JButton("Perform a selection");
+        selectButton = new JButton("Perform a projection or selection");
+        joinButton = new JButton("Perform a join query");
 
 
         // layout components using the GridBag layout manager
@@ -101,14 +104,21 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         contentPane.add(deleteTrailButton);
 
         // place select button
-        c.gridwidth = GridBagConstraints.PAGE_START;
+        c.gridwidth = GridBagConstraints.RELATIVE;
         c.insets = new Insets(5, 10, 10, 10);
         gb.setConstraints(selectButton, c);
         contentPane.add(selectButton);
 
+        // place join button
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(selectButton, c);
+        contentPane.add(joinButton);
+
         showContentsButton.addActionListener(this);
         deleteTrailButton.addActionListener(this);
         selectButton.addActionListener(this);
+        joinButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -257,6 +267,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(dialogueFrame, printString);
     }
 
+
     /**
      * ActionListener Methods
      */
@@ -276,8 +287,12 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Run query":
                 handleSelectionSearch();
                 break;
+            case "Perform a join query":
+                break;
             default:
                 break;
         }
     }
+
+
 }

@@ -4,8 +4,6 @@ import model.TrailModel;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -62,7 +60,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void databaseSetup() {
-        dropTrailTableIfExists();
+        dropTablesIfExists();
 
         try {
             Statement statement = connection.createStatement();
@@ -221,6 +219,7 @@ public class DatabaseConnectionHandler {
         }
     }
 
+
     private void rollbackConnection() {
         try  {
             connection.rollback();
@@ -229,7 +228,7 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    private void dropTrailTableIfExists() {
+    private void dropTablesIfExists() {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
@@ -237,6 +236,14 @@ public class DatabaseConnectionHandler {
             while(rs.next()) {
                 if(rs.getString(1).toLowerCase().equals("trail")) {
                     stmt.execute("DROP TABLE trail");
+                    break;
+                }
+                if(rs.getString(1).toLowerCase().equals("lake")) {
+                    stmt.execute("DROP TABLE lake");
+                    break;
+                }
+                if(rs.getString(1).toLowerCase().equals("connects_to")) {
+                    stmt.execute("DROP TABLE connects_to");
                     break;
                 }
             }
