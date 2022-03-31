@@ -75,7 +75,7 @@ public class DatabaseConnectionHandler {
 
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE lake (lake_name varchar2(20) not null PRIMARY KEY, swimmable bool");
+            statement.executeUpdate("CREATE TABLE lake (lake_name varchar2(20) not null PRIMARY KEY, swimmable bool)");
             statement.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
@@ -83,11 +83,14 @@ public class DatabaseConnectionHandler {
 
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE connects_to (trail_id integer not null, lake_name varchar2(20) " +
-                    "PRIMARY KEY (trail_id, lake_name), FOREIGN KEY (lake_name) references lake," +
-                    "FOREIGN KEY (trail_id) references trail)");
+            statement.executeUpdate("CREATE TABLE connects_to " +
+                    "(trail_id integer not null, lake_name varchar2(20) not null " +
+                    "PRIMARY KEY (trail_id, lake_name)," +
+                    " CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name)," +
+                    " CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id))");
             statement.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
@@ -98,9 +101,9 @@ public class DatabaseConnectionHandler {
         TrailModel trail3 = new TrailModel(3, "Bear Trail", 9.5, 2,
                 2000);
 
-        LakeModel lake1 = new LakeModel("Great Bear Lake", true);
-        LakeModel lake2 = new LakeModel("Williams Lake", true);
-        LakeModel lake3 = new LakeModel("Ontario", false);
+        LakeModel lake1 = new LakeModel("Great Bear Lake", 1);
+        LakeModel lake2 = new LakeModel("Williams Lake", 1);
+        LakeModel lake3 = new LakeModel("Ontario", 0);
 
         ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
         ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
@@ -145,7 +148,7 @@ public class DatabaseConnectionHandler {
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO lake VALUES (?,?)");
             ps.setString(1, model.getLakeName());
-            ps.setBoolean(2, model.getSwimmable());
+            ps.setInt(2, model.getSwimmable());
 
             ps.executeUpdate();
             connection.commit();
@@ -159,7 +162,7 @@ public class DatabaseConnectionHandler {
 
     public void insertConnectsTo(ConnectsToModel model) {
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO lake VALUES (?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO connects_to VALUES (?,?)");
             ps.setInt(1, model.getConnectsToTrailId());
             ps.setString(2, model.getConnectsToLakeName());
 
@@ -168,6 +171,7 @@ public class DatabaseConnectionHandler {
 
             ps.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }

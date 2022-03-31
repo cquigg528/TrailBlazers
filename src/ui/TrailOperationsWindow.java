@@ -97,22 +97,22 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         contentPane.add(deleteTrailIdField);
 
         // place the delete button
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = GridBagConstraints.RELATIVE;
         c.insets = new Insets(5, 10, 10, 10);
         c.anchor = GridBagConstraints.CENTER;
         gb.setConstraints(deleteTrailButton, c);
         contentPane.add(deleteTrailButton);
 
         // place select button
-        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(5, 10, 10, 10);
         gb.setConstraints(selectButton, c);
         contentPane.add(selectButton);
 
         // place join button
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = GridBagConstraints.RELATIVE;
         c.insets = new Insets(5, 10, 10, 10);
-        gb.setConstraints(selectButton, c);
+        gb.setConstraints(joinButton, c);
         contentPane.add(joinButton);
 
         showContentsButton.addActionListener(this);
@@ -143,7 +143,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         ArrayList<String> contentList = delegate.showTrailInfo();
         String printString = "";
         for (String string : contentList ) {
-            printString += string + "\n";
+            printString += string + "\n\n";
         }
 
         JFrame dialogueFrame = new JFrame("Database Contents");

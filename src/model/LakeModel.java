@@ -2,10 +2,10 @@ package model;
 
 public class LakeModel {
     private String lakeName;
-    private boolean swimmable;
+    private int swimmable; // 0 or 1
 
 
-    public LakeModel(String lakeName, boolean swimmable) {
+    public LakeModel(String lakeName, int swimmable) {
         this.lakeName = lakeName;
         this.swimmable = swimmable;
     }
@@ -14,7 +14,7 @@ public class LakeModel {
         return this.lakeName;
     }
 
-    public boolean getSwimmable() {
+    public int getSwimmable() {
         return this.swimmable;
     }
 }
