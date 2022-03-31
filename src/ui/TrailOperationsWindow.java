@@ -32,6 +32,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     JButton selectButton;
     JButton joinButton;
     JButton aggregationButton;
+    JButton NestedaggregationButton;
 
     JLabel deleteTrailLabel;
     JTextField deleteTrailIdField;
@@ -39,6 +40,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private JComboBox<String> fieldsDropDownWhere;
     private JComboBox<String> comparatorDropDown;
     private JTextField conditionInput;
+
 
     public TrailOperationsWindow() {
         super("Trailblazers");
@@ -69,6 +71,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         selectButton = new JButton("Perform a projection or selection");
         joinButton = new JButton("Perform a join query");
         aggregationButton = new JButton("Perform a simple aggregation query");
+        NestedaggregationButton = new JButton("Perform a nested aggregation query");
 
 
         // layout components using the GridBag layout manager
@@ -123,11 +126,18 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(aggregationButton, c);
         contentPane.add(aggregationButton);
 
+        // place Nested aggregation button
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(NestedaggregationButton, c);
+        contentPane.add(NestedaggregationButton);
+
         showContentsButton.addActionListener(this);
         deleteTrailButton.addActionListener(this);
         selectButton.addActionListener(this);
         joinButton.addActionListener(this);
         aggregationButton.addActionListener(this);
+        NestedaggregationButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -265,6 +275,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         delegate.performSelection(selectAttribute, whereAttribute, comparator, value);
     }
 
+    public void handleNestedAggregationQuery() {
+        delegate.peformNestedAggregation();
+    }
+
     public void displaySearchResults(ArrayList<String> results) {
         String printString = "";
 
@@ -305,17 +319,21 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Perform a simple aggregation query":
                 handleAggregationquery();
                 break;
+            case "Perform a nested aggregation query":
+                handleNestedAggregationQuery();
+                break;
             default:
                 break;
         }
     }
 
-    public void displayNestedAggregateResults(String result) {
-        JFrame dialogueFrame = new JFrame("Search Results");
-        JOptionPane.showMessageDialog(dialogueFrame, "The longest distance of any trail is: "+ result);
-    }
     public void displayAggregateResults(String result) {
         JFrame dialogueFrame = new JFrame("Search Results");
         JOptionPane.showMessageDialog(dialogueFrame, "The longest distance of any trail is: "+ result);
+    }
+    public void displayNestedAggregateResults(String result) {
+        JFrame dialogueFrame = new JFrame("Search Results");
+        JOptionPane.showMessageDialog(dialogueFrame, "The highest difficulty rating(s) where the highest elevation gain" +
+                "is the minimum over all difficulties is/are: "+ result);
     }
 }

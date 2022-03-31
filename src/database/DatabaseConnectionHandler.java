@@ -71,11 +71,23 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
-        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 3, 1200);
+        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 1, 1500);
         insertTrail(trail1);
 
-        TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 6, 5500);
+        TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 3, 5500);
         insertTrail(trail2);
+
+        TrailModel trail3 = new TrailModel(3, "Bear Trail", 4.3, 3, 4500);
+        insertTrail(trail3);
+
+        TrailModel trail4 = new TrailModel(4, "Rattlesnake Trail", 4.3, 1, 500);
+        insertTrail(trail4);
+
+        TrailModel trail5 = new TrailModel(5, "Rattle Trail", 4.3, 2, 1500);
+        insertTrail(trail5);
+
+        TrailModel trail6 = new TrailModel(6, "Rat Trail", 4.3, 2, 500);
+        insertTrail(trail6);
 
     }
 
@@ -270,5 +282,26 @@ public class DatabaseConnectionHandler {
             rollbackConnection();
         }
         return result.toString();
+    }
+
+    public String performNestedAggregation() {
+        ResultSet rs = null;
+        String result_string = "";
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(t0.trail_difficulty) as TD FROM trail t0 GROUP BY t0.trail_difficulty " +
+                    "HAVING MAX(t0.trail_elevation_gain) <= all (SELECT MAX(t1.trail_elevation_gain) FROM trail t1 GROUP BY t1.trail_difficulty)");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                result = rs.getDouble("TD");
+                result_string += ", " + result.toString();
+            }
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result_string;
+
     }
 }
