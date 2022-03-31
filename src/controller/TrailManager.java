@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * Main controller class.  Based on cs304 JavaDemo
  */
 public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegate {
-    private DatabaseConnectionHandler dbHandler = null;
-    private LoginWindow loginWindow = null;
+    private DatabaseConnectionHandler dbHandler;
+    private LoginWindow loginWindow;
     private TrailOperationsWindow operationsWindow = null;
 
     public TrailManager() {
@@ -38,6 +38,7 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
 
+            operationsWindow = new TrailOperationsWindow();
             operationsWindow.setupDatabase(this);
             operationsWindow.showFrame(this);
         } else {

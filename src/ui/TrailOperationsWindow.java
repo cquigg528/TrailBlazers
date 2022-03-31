@@ -1,8 +1,6 @@
 package ui;
 
 import delegates.TrailOperationsDelegate;
-import jdk.nashorn.internal.scripts.JO;
-import sun.tools.jconsole.inspector.XObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +10,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class is responsible for the main trail operations  GUI and handing
@@ -38,7 +38,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private JTextField conditionInput;
 
     public TrailOperationsWindow() {
-        super("Damn you cute and sessy");
+        super("Trailblazers");
     }
 
     /**
@@ -149,7 +149,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         }
     }
 
-    public void handleSelection() {
+    public void showSelectionWindow() {
         JLabel selectLabel = new JLabel("SELECT ");
         JLabel fromLabel = new JLabel("FROM              Trail");
         JLabel whereLabel = new JLabel("WHERE ");
@@ -157,10 +157,12 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         searchButton.addActionListener(this);
 
 
-        String[] fields = {"difficulty", "distance", "elevation gain"};
+        String[] selectFields = {"*", "difficulty", "distance", "elevation gain"};
+        String[] whereFields = {"difficulty", "distance", "elevation gain"};
+
         String[] comparators = {">", ">=", "==", "!=", "<", "<="};
-        fieldsDropDownSelect = new JComboBox<String>(fields);
-        fieldsDropDownWhere = new JComboBox<String>(fields);
+        fieldsDropDownSelect = new JComboBox<String>(selectFields);
+        fieldsDropDownWhere = new JComboBox<String>(whereFields);
         comparatorDropDown = new JComboBox<String>(comparators);
         conditionInput = new JTextField();
 
@@ -215,7 +217,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
                 40 + size.width, size.height);
 
         size = searchButton.getPreferredSize();
-        searchButton.setBounds(50 + insets.left, 135 + insets.top,
+        searchButton.setBounds(40 + insets.left, 150 + insets.top,
                 size.width, size.height);
 
         // center the frame
@@ -242,8 +244,13 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void displaySearchResults(ArrayList<String> results) {
         String printString = "";
+
         for (String string : results ) {
-            printString += string + "\n";
+            printString +=  string + "\n\n";
+        }
+
+        if (printString.equals("")) {
+            printString = "No results found.";
         }
 
         JFrame dialogueFrame = new JFrame("Search Results");
@@ -264,7 +271,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
                 handleDelete();
                 break;
             case "Perform a selection":
-                handleSelection();
+                showSelectionWindow();
                 break;
             case "Run query":
                 handleSelectionSearch();

@@ -4,6 +4,8 @@ import model.TrailModel;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -64,16 +66,16 @@ public class DatabaseConnectionHandler {
 
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) not null, trail_difficulty integer, trail_distance real, elevation_gain real)");
+            statement.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) not null, trail_difficulty integer, trail_distance real, trail_elevation_gain real)");
             statement.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
-        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 3200.00, 3, 12.5);
+        TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 3, 1200);
         insertTrail(trail1);
 
-        TrailModel trail2 = new TrailModel(2, "Beetle bun head", 9830.00, 6, 5.5);
+        TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 6, 5500);
         insertTrail(trail2);
 
     }
@@ -112,7 +114,7 @@ public class DatabaseConnectionHandler {
                                                   rs.getString("trail_name"),
                                                   rs.getDouble("trail_distance"),
                                                   rs.getInt("trail_difficulty"),
-                                                  rs.getDouble("elevation_gain"));
+                                                  rs.getDouble("trail_elevation_gain"));
                 tempResult.add(model);
             }
 
@@ -134,31 +136,52 @@ public class DatabaseConnectionHandler {
 
         ArrayList<TrailModel> tempResult = new ArrayList<>();
 
-        String sqlString = "SELECT _scolumn FROM trail WHERE _wcolumn _op _value";
+        String prepend = "trail_";
+
+        selectAttribute = selectAttribute == "*"? selectAttribute : prepend + selectAttribute;
+        whereAttribute = prepend + whereAttribute;
+
+
+        String sqlString = "SELECT _scolumn FROM trail WHERE _wcolumn _op _wvalue";
         sqlString = sqlString.replace("_scolumn", selectAttribute);
         sqlString = sqlString.replace("_wcolumn", whereAttribute);
         sqlString = sqlString.replace("_op", comparator);
-        sqlString = sqlString.replace("_value", value);
+        sqlString = sqlString.replace("_wvalue", value);
+
+        TrailModel model = null;
 
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(sqlString);
 
             while (rs.next()) {
-                TrailModel model = new TrailModel(rs.getInt("trail_id"),
-                        rs.getString("trail_name"),
-                        rs.getDouble("trail_distance"),
-                        rs.getInt("trail_difficulty"),
-                        rs.getDouble("elevation_gain"));
+                switch (selectAttribute) {
+                    case "*":
+                        model = new TrailModel(rs.getInt("trail_id"),
+                                rs.getString("trail_name"),
+                                rs.getDouble("trail_distance"),
+                                rs.getInt("trail_difficulty"),
+                                rs.getDouble("trail_elevation_gain"));
+                        break;
+//                    case "trail_difficulty":
+                        // !! TODO!!
+//                        Object difficultyColumn = rs.getInt("trail_difficulty");
+                    default:
+                        break;
+                }
+
                 tempResult.add(model);
             }
 
+            System.out.println(("Trail model: " + tempResult));
             rs.close();
             stmt.close();
         } catch (SQLException e) {
+            System.out.println("here: " + sqlString);
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+
 
         return translateTrailModelsToStrings(tempResult);
     }
@@ -168,10 +191,10 @@ public class DatabaseConnectionHandler {
         ArrayList<String> result = new ArrayList<>();
 
         for (TrailModel model : models) {
-            String modelString = "Trail: ";
+            String modelString = "";
 
-            modelString += model.getTrailId() + " " + model.getTrailName() + " " + model.getTrailDifficulty() + " "
-                    + model.getTrailDistance() + " " + model.getElevationGain();
+            modelString += "trail_id:          "+ model.getTrailId() + "\n" + "trail_name:      " + model.getTrailName() + "\n" + "trail_difficulty: " + model.getTrailDifficulty() + "\n"
+                  + "trail_distance:  " + model.getTrailDistance() + "\n" + "elevation_gain: " + model.getElevationGain();
 
             result.add(modelString);
         }
@@ -212,7 +235,7 @@ public class DatabaseConnectionHandler {
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
 
             while(rs.next()) {
-                if(rs.getString(1).toLowerCase().equals("branch")) {
+                if(rs.getString(1).toLowerCase().equals("trail")) {
                     stmt.execute("DROP TABLE trail");
                     break;
                 }

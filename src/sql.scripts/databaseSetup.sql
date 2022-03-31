@@ -3,7 +3,7 @@ CREATE TABLE trail (
     trail_name varchar2(20) not null,
     trail_difficulty integer,
     trail_distance real,
-    elevation_gain real
+    trail_elevation_gain real
 );
 
 INSERT INTO trail VALUES (1, "Windermere", 3, 8, 150);
