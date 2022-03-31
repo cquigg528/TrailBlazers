@@ -3,7 +3,6 @@ package controller;
 import database.DatabaseConnectionHandler;
 import delegates.LoginWindowDelegate;
 import delegates.TrailOperationsDelegate;
-import model.TrailModel;
 import ui.LoginWindow;
 import ui.TrailOperationsWindow;
 
@@ -69,6 +68,12 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
         ArrayList<String> results = dbHandler.performSelection(selectAttribute,whereAttribute, comparator, value);
         operationsWindow.displaySearchResults(results);
 
+    }
+
+    @Override
+    public void performAggregation() {
+        String result = dbHandler.performAggregation();
+        operationsWindow.displayAggregateResults(result);
     }
 
     /**

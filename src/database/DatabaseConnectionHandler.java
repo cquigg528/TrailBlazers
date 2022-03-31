@@ -20,6 +20,7 @@ public class DatabaseConnectionHandler {
     private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
+    public Double result = 0.0;
 
     private Connection connection = null;
 
@@ -253,5 +254,21 @@ public class DatabaseConnectionHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
+    }
+
+    public String performAggregation() {
+        ResultSet rs = null;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(trail_distance) as MD FROM trail");
+            rs = ps.executeQuery();
+            rs.next();
+            result = rs.getDouble("MD");
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result.toString();
     }
 }

@@ -31,6 +31,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     JButton deleteTrailButton;
     JButton selectButton;
     JButton joinButton;
+    JButton aggregationButton;
 
     JLabel deleteTrailLabel;
     JTextField deleteTrailIdField;
@@ -67,6 +68,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
         selectButton = new JButton("Perform a projection or selection");
         joinButton = new JButton("Perform a join query");
+        aggregationButton = new JButton("Perform a simple aggregation query");
 
 
         // layout components using the GridBag layout manager
@@ -112,13 +114,20 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         // place join button
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(5, 10, 10, 10);
-        gb.setConstraints(selectButton, c);
+        gb.setConstraints(joinButton, c);
         contentPane.add(joinButton);
+
+        // place aggregation button
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(aggregationButton, c);
+        contentPane.add(aggregationButton);
 
         showContentsButton.addActionListener(this);
         deleteTrailButton.addActionListener(this);
         selectButton.addActionListener(this);
         joinButton.addActionListener(this);
+        aggregationButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -157,6 +166,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             int trailId = Integer.parseInt(input);
             delegate.deleteTrail(trailId);
         }
+    }
+
+    public void handleAggregationquery() {
+        delegate.performAggregation();
     }
 
     public void showSelectionWindow() {
@@ -289,10 +302,20 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
                 break;
             case "Perform a join query":
                 break;
+            case "Perform a simple aggregation query":
+                handleAggregationquery();
+                break;
             default:
                 break;
         }
     }
 
-
+    public void displayNestedAggregateResults(String result) {
+        JFrame dialogueFrame = new JFrame("Search Results");
+        JOptionPane.showMessageDialog(dialogueFrame, "The longest distance of any trail is: "+ result);
+    }
+    public void displayAggregateResults(String result) {
+        JFrame dialogueFrame = new JFrame("Search Results");
+        JOptionPane.showMessageDialog(dialogueFrame, "The longest distance of any trail is: "+ result);
+    }
 }
