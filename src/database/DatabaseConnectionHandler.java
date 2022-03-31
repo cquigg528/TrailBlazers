@@ -6,6 +6,7 @@ import model.ConnectsToModel;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 /**
@@ -62,32 +63,26 @@ public class DatabaseConnectionHandler {
     }
 
     public void databaseSetup() {
-        dropTablesIfExists();
+        dropConnectsToTablesIfExists();
+        dropTrailTablesIfExists();
+        dropLakeTablesIfExists();
 
         try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) " +
+            Statement statementLake = connection.createStatement();
+            statementLake.executeUpdate("CREATE TABLE lake (lake_name varchar2(20) not null PRIMARY KEY, swimmable int not null)");
+            statementLake.close();
+
+            Statement statementTrail = connection.createStatement();
+            statementTrail.executeUpdate("CREATE TABLE trail (trail_id integer not null PRIMARY KEY, trail_name varchar2(20) " +
                     "not null, trail_difficulty integer, trail_distance real, trail_elevation_gain real)");
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
+            statementTrail.close();
 
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate("CREATE TABLE lake (lake_name varchar2(20) not null PRIMARY KEY, swimmable bool)");
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-
-        try {
             Statement statement = connection.createStatement();
             statement.executeUpdate("CREATE TABLE connects_to " +
-                    "(trail_id integer not null, lake_name varchar2(20) not null " +
+                    "(trail_id integer not null, lake_name varchar2(20) not null, " +
                     "PRIMARY KEY (trail_id, lake_name)," +
-                    " CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name)," +
-                    " CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id))");
+                    "CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name)," +
+                    "CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id))");
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,23 +100,22 @@ public class DatabaseConnectionHandler {
         LakeModel lake2 = new LakeModel("Williams Lake", 1);
         LakeModel lake3 = new LakeModel("Ontario", 0);
 
-        ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
-        ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
-        ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
-        ConnectsToModel connects4 = new ConnectsToModel(1, "Ontario");
+//        ConnectsToModel connects1 = new ConnectsToModel(1, "Great Bear Lake");
+//        ConnectsToModel connects2 = new ConnectsToModel(2, "Williams Lake");
+//        ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
 
         insertTrail(trail1);
         insertTrail(trail2);
         insertTrail(trail3);
 
-        insertLake(lake1);
-        insertLake(lake2);
-        insertLake(lake3);
+//        insertLake(lake1);
+//        insertLake(lake2);
+//        insertLake(lake3);
 
-        insertConnectsTo(connects1);
-        insertConnectsTo(connects2);
-        insertConnectsTo(connects3);
-        insertConnectsTo(connects4);
+//        insertConnectsTo(connects1);
+//        insertConnectsTo(connects2);
+//        insertConnectsTo(connects3);
+//        insertConnectsTo(connects4);
 
     }
 
@@ -139,6 +133,7 @@ public class DatabaseConnectionHandler {
 
             ps.close();
         } catch (SQLException e) {
+            System.out.println("problem in insertTrail");
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
@@ -150,11 +145,17 @@ public class DatabaseConnectionHandler {
             ps.setString(1, model.getLakeName());
             ps.setInt(2, model.getSwimmable());
 
+            System.out.println("problem before execute update");
             ps.executeUpdate();
+            System.out.println("problem before commit");
+
             connection.commit();
+            System.out.println("problem after commit");
+
 
             ps.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
@@ -308,20 +309,50 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    private void dropTablesIfExists() {
+    private void dropTrailTablesIfExists() {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
-
             while(rs.next()) {
+                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("trail")) {
                     stmt.execute("DROP TABLE trail");
                     break;
                 }
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+    }
+
+    private void dropLakeTablesIfExists() {
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("select table_name from user_tables");
+            while(rs.next()) {
+                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("lake")) {
                     stmt.execute("DROP TABLE lake");
                     break;
                 }
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+    }
+
+    private void dropConnectsToTablesIfExists() {
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("select table_name from user_tables");
+            while(rs.next()) {
+                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("connects_to")) {
                     stmt.execute("DROP TABLE connects_to");
                     break;

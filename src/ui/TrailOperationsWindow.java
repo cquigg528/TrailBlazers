@@ -123,7 +123,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                delegate.trailOperationsFinished();
             }
         });
 
@@ -281,7 +281,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Delete trail":
                 handleDelete();
                 break;
-            case "Perform a selection":
+            case "Perform a selection or projection":
                 showSelectionWindow();
                 break;
             case "Run query":

@@ -70,6 +70,14 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
 
     }
 
+    @Override
+    public void trailOperationsFinished() {
+        dbHandler.close();
+        dbHandler = null;
+
+        System.exit(0);
+    }
+
     /**
      * Main method called at launch time
      */
