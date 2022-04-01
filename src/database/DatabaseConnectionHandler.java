@@ -273,7 +273,6 @@ public class DatabaseConnectionHandler {
         selectAttribute = selectAttribute == "*"? selectAttribute : prepend + selectAttribute;
         whereAttribute = prepend + whereAttribute;
 
-
         String sqlString = "SELECT _scolumn FROM trail WHERE _wcolumn _op _wvalue";
         sqlString = sqlString.replace("_scolumn", selectAttribute);
         sqlString = sqlString.replace("_wcolumn", whereAttribute);
@@ -293,6 +292,7 @@ public class DatabaseConnectionHandler {
                 switch (selectAttribute) {
                     case "*":
                         selectAll = true;
+
                         model = new TrailModel(rs.getInt("trail_id"),
                                 rs.getString("trail_name"),
                                 rs.getDouble("trail_distance"),

@@ -26,6 +26,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private TrailOperationsDelegate delegate = null;
 
     JButton showLakesButton;
+    JButton showContentButton;
     JButton showConnectsToButton;
     JButton showTrailsButton;
     JButton deleteTrailButton;
