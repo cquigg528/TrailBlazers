@@ -72,8 +72,8 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
     }
 
     @Override
-    public void performJoinSearch(String selection) {
-        ArrayList<String> results = dbHandler.performJoinSearch(selection);
+    public void performJoinSearch(String selection, String where) {
+        ArrayList<String> results = dbHandler.performJoinSearch(selection, where);
         operationsWindow.displaySearchResults(results);
     }
 
@@ -94,6 +94,7 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
     public void peformNestedAggregation() {
         String result = dbHandler.performNestedAggregation();
         operationsWindow.displayNestedAggregateResults(result);
+    }
 
     public void trailOperationsFinished() {
         dbHandler.close();

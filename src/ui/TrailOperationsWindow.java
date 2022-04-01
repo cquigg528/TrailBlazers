@@ -41,6 +41,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private JComboBox<String> comparatorDropDown;
     private JTextField conditionInput;
     private JTextField selectEntryField;
+    private JTextField whereEntryField;
 
 
     public TrailOperationsWindow() {
@@ -150,8 +151,6 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(NestedaggregationButton, c);
         contentPane.add(NestedaggregationButton);
 
-        showContentsButton.addActionListener(this);
-
         showLakesButton.addActionListener(this);
         showConnectsToButton.addActionListener(this);
         showTrailsButton.addActionListener(this);
@@ -235,10 +234,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         searchButton.addActionListener(this);
 
 
-        String[] selectFields = {"*", "difficulty", "distance", "elevation gain"};
-        String[] whereFields = {"difficulty", "distance", "elevation gain"};
+        String[] selectFields = {"*", "difficulty", "distance", "elevation_gain"};
+        String[] whereFields = {"difficulty", "distance", "elevation_gain"};
 
-        String[] comparators = {">", ">=", "==", "!=", "<", "<="};
+        String[] comparators = {">", ">=", "=", "!=", "<", "<="};
         fieldsDropDownSelect = new JComboBox<String>(selectFields);
         fieldsDropDownWhere = new JComboBox<String>(whereFields);
         comparatorDropDown = new JComboBox<String>(comparators);
@@ -323,16 +322,18 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void handleNestedAggregationQuery() {
         delegate.peformNestedAggregation();
+    }
 
     public void showJoinWindow() {
         JLabel selectLabel = new JLabel("SELECT: ");
         JLabel remainderLabel = new JLabel("<html>FROM              Trail t, Lake l, Connects_to ct" +
-                "<br/><br/>WHERE             swimmable = 1</html>");
+                "<br/><br/>WHERE</html>");
         JLabel header = new JLabel("Perform a query over the trails that are connected to swimmable lakes:");
         JLabel selectOptions = new JLabel("<html>Enter one or more of: t.trail_id, ct.trail_id " +
                 "t.trail_name, t.trail_difficulty,<br/> t.trail_distance, t.trail_elevation_gain, ct.lake_name, l.lake_name,<br/> l.swimmable</html>");
 
         selectEntryField = new JTextField(20);
+        whereEntryField = new JTextField(20);
 
         JButton searchButton = new JButton("Search");
 
@@ -349,6 +350,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         panel.add(header);
         panel.add(selectOptions);
         panel.add(selectEntryField);
+        panel.add(whereEntryField);
         panel.add(searchButton);
 
         Insets insets = frame.getInsets();
@@ -376,6 +378,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         searchButton.setBounds(5 + insets.left, 180 + insets.top,
                 size.width, size.height);
 
+        size = whereEntryField.getPreferredSize();
+        whereEntryField.setBounds(85 + insets.left, 149 + insets.top,
+                size.width, size.height);
+
         searchButton.addActionListener(this);
 
         // center the frame
@@ -394,8 +400,9 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void handleJoinSearch() {
         String selection = (String) selectEntryField.getText();
+        String where = (String) whereEntryField.getText();
 
-        delegate.performJoinSearch(selection);
+        delegate.performJoinSearch(selection, where);
     }
 
     public void displaySearchResults(ArrayList<String> results) {
