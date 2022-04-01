@@ -3,7 +3,6 @@ package controller;
 import database.DatabaseConnectionHandler;
 import delegates.LoginWindowDelegate;
 import delegates.TrailOperationsDelegate;
-import model.TrailModel;
 import ui.LoginWindow;
 import ui.TrailOperationsWindow;
 
@@ -64,11 +63,33 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
         return dbHandler.getTrailInfo();
     }
 
+    public ArrayList<String> showLakeInfo() {
+        return dbHandler.getLakeInfo();
+    }
+
+    public ArrayList<String> showConnectionInfo() {
+        return dbHandler.getConnectionInfo();
+    }
+
+    @Override
+    public void performJoinSearch(String selection) {
+        ArrayList<String> results = dbHandler.performJoinSearch(selection);
+        operationsWindow.displaySearchResults(results);
+    }
+
     @Override
     public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value) {
         ArrayList<String> results = dbHandler.performSelection(selectAttribute,whereAttribute, comparator, value);
         operationsWindow.displaySearchResults(results);
 
+    }
+
+    @Override
+    public void trailOperationsFinished() {
+        dbHandler.close();
+        dbHandler = null;
+
+        System.exit(0);
     }
 
     /**

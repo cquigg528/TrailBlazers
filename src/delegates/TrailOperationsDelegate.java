@@ -15,7 +15,12 @@ public interface TrailOperationsDelegate {
     public void databaseSetup();
     public void deleteTrail(int trailId);
     public ArrayList<String> showTrailInfo();
+    public ArrayList<String> showLakeInfo();
+    public ArrayList<String> showConnectionInfo();
+
     public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value);
+    public void performJoinSearch(String selection);
+    public void trailOperationsFinished();
 
     // add selection, projection, join, nested aggregation baby
 
