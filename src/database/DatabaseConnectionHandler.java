@@ -107,7 +107,6 @@ public class DatabaseConnectionHandler {
         ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
 
         insertTrail(trail1);
-
         insertTrail(trail2);
         insertTrail(trail3);
 
@@ -192,8 +191,6 @@ public class DatabaseConnectionHandler {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM trail");
-
-            System.out.println("getting trail info");
 
             while (rs.next()) {
                 TrailModel model = new TrailModel(rs.getInt("trail_id"),
@@ -319,11 +316,9 @@ public class DatabaseConnectionHandler {
                 }
             }
 
-            System.out.println(("Trail model: " + tempResult));
             rs.close();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println("here: " + sqlString);
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
@@ -339,7 +334,6 @@ public class DatabaseConnectionHandler {
         ArrayList<String> result = new ArrayList<>();
 
         String[] columns = selection.split("[,]", 0);
-        System.out.println(selection);
         String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE " + where;
 //        l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name
         int resultInt;
@@ -442,7 +436,6 @@ public class DatabaseConnectionHandler {
 
             ps.close();
         } catch (SQLException e) {
-            System.out.println("this is the problem");
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
@@ -537,7 +530,7 @@ public class DatabaseConnectionHandler {
             rs = ps.executeQuery();
             while (rs.next()) {
                 result = rs.getInt("TD");
-                result_string += ", " + String.valueOf(result);
+                result_string += result + ", ";
             }
             connection.commit();
             ps.close();
