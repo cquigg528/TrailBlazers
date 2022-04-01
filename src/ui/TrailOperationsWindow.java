@@ -38,6 +38,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private JComboBox<String> fieldsDropDownWhere;
     private JComboBox<String> comparatorDropDown;
     private JTextField conditionInput;
+    private JTextField selectEntryField;
 
     public TrailOperationsWindow() {
         super("Trailblazers");
@@ -68,7 +69,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         deleteTrailIdField = new JTextField(10);
 
         selectButton = new JButton("Perform a projection or selection");
-        joinButton = new JButton("Perform a join query");
+        joinButton = new JButton("Perform a query using join");
 
 
         // layout components using the GridBag layout manager
@@ -290,6 +291,80 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         delegate.performSelection(selectAttribute, whereAttribute, comparator, value);
     }
 
+    public void showJoinWindow() {
+        JLabel selectLabel = new JLabel("SELECT: ");
+        JLabel remainderLabel = new JLabel("<html>FROM              Trail, Lake, Connects_to" +
+                "<br/><br/>WHERE             swimmable = 1</html>");
+        JLabel header = new JLabel("Perform a query over the trails that are connected to swimmable lakes:");
+        JLabel selectOptions = new JLabel("<html>Enter one or more of: trail_id, " +
+                "trail_name, trail_difficulty, trail_distance,<br/> trail_elevation_gain, lake_name, swimmable</html>");
+
+        selectEntryField = new JTextField(20);
+
+        JButton searchButton = new JButton("Search");
+
+        JFrame frame = new JFrame("Join Query");
+        JPanel panel = new JPanel();
+
+        Dimension screenSize = new Dimension(500, 350);
+
+        frame.add(panel);
+
+        panel.setLayout(null);
+        panel.add(selectLabel);
+        panel.add(remainderLabel);
+        panel.add(header);
+        panel.add(selectOptions);
+        panel.add(selectEntryField);
+        panel.add(searchButton);
+
+        Insets insets = frame.getInsets();
+        Dimension size = header.getPreferredSize();
+        header.setBounds(5 + insets.left, 5 + insets.top,
+                size.width, size.height);
+
+        size = selectOptions.getPreferredSize();
+        selectOptions.setBounds(5 + insets.left, 45 + insets.top,
+                size.width, size.height);
+
+        size = selectLabel.getPreferredSize();
+        selectLabel.setBounds(5 + insets.left, 100 + insets.top,
+                size.width, size.height);
+
+        size = selectEntryField.getPreferredSize();
+        selectEntryField.setBounds(85 + insets.left, 95 + insets.top,
+                size.width, size.height);
+
+        size = remainderLabel.getPreferredSize();
+        remainderLabel.setBounds(5 + insets.left, 120 + insets.top,
+                size.width, size.height);
+
+        size = searchButton.getPreferredSize();
+        searchButton.setBounds(5 + insets.left, 180 + insets.top,
+                size.width, size.height);
+
+        searchButton.addActionListener(this);
+
+        // center the frame
+        Dimension d = frame.getToolkit().getScreenSize();
+        Rectangle r = frame.getBounds();
+        frame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+
+        frame.pack();
+        frame.setVisible(true);
+        frame.setResizable(true);
+        frame.setPreferredSize(screenSize);
+        frame.setMinimumSize(screenSize);
+        frame.setMaximumSize(screenSize);
+
+    }
+
+    public void handleJoinSearch() {
+        String selection = (String) selectEntryField.getText();
+
+        delegate.performJoinSearch(selection);
+    }
+
     public void displaySearchResults(ArrayList<String> results) {
         String printString = "";
 
@@ -331,8 +406,11 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Show connections":
                 showConnections();
                 break;
-            case "Perform a join query":
-                // TODO!!!
+            case "Perform a query using join":
+                showJoinWindow();
+                break;
+            case "Search":
+                handleJoinSearch();
                 break;
             default:
                 break;

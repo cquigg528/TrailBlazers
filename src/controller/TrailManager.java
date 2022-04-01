@@ -72,6 +72,12 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
     }
 
     @Override
+    public void performJoinSearch(String selection) {
+        ArrayList<String> results = dbHandler.performJoinSearch(selection);
+        operationsWindow.displaySearchResults(results);
+    }
+
+    @Override
     public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value) {
         ArrayList<String> results = dbHandler.performSelection(selectAttribute,whereAttribute, comparator, value);
         operationsWindow.displaySearchResults(results);

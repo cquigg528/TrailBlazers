@@ -300,9 +300,55 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-
-
         return translateTrailModelsToStrings(tempResult);
+    }
+
+    public ArrayList<String> performJoinSearch(String selection) {
+
+        ArrayList<String> result = new ArrayList<>();
+
+        String[] columns = selection.split("[,]", 0);
+        System.out.println(selection);
+        String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name";
+        int resultInt;
+        double resultDouble;
+        String tempResultStr;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sqlString);
+
+            while (rs.next()) {
+                String resultString = "";
+                for (String column : columns) {
+                    column = column.trim();
+                    if (column.equals("t.trail_id") || column.equals("t.trail_difficulty") || column.equals("l.swimmable")) {
+                        column = column.replace("t.", "");
+                        column = column.replace("l.", "");
+                        resultInt = rs.getInt(column);
+                        resultString += ", " + column + ": " + resultInt;
+                    }
+                    else if (column.equals("t.trail_distance") || column.equals("t.trail_elevation_gain")) {
+                        column = column.replace("t.", "");
+                        resultDouble = rs.getDouble(column);
+                        resultString += " " + column + ": " + resultDouble + ", ";
+                    }
+                    else if (column.equals("t.trail_name") || column.equals("l.lake_name") ||
+                            column.equals("ct.trail_name") || column.equals("ct.lake_name")) {
+                        column = column.replace("ct.", "");
+                        column = column.replace("t.", "");
+                        column = column.replace("l.", "");
+                        tempResultStr = rs.getString(column);
+                        resultString += ", " + column + ": " + tempResultStr;
+                    }
+                }
+                result.add(resultString);
+            }
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+        return result;
     }
 
     public ArrayList<String> translateTrailModelsToStrings(ArrayList<TrailModel> models) {
@@ -384,7 +430,6 @@ public class DatabaseConnectionHandler {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
             while(rs.next()) {
-                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("trail")) {
                     stmt.execute("DROP TABLE trail");
                     break;
@@ -403,7 +448,6 @@ public class DatabaseConnectionHandler {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
             while(rs.next()) {
-                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("lake")) {
                     stmt.execute("DROP TABLE lake");
                     break;
@@ -422,7 +466,6 @@ public class DatabaseConnectionHandler {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
             while(rs.next()) {
-                System.out.println(rs.getString(1).toLowerCase());
                 if(rs.getString(1).toLowerCase().equals("connects_to")) {
                     stmt.execute("DROP TABLE connects_to");
                     break;
