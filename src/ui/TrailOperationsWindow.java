@@ -26,6 +26,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private TrailOperationsDelegate delegate = null;
 
     JButton showLakesButton;
+    JButton showContentButton;
     JButton showConnectsToButton;
     JButton showTrailsButton;
     JButton deleteTrailButton;
@@ -149,8 +150,6 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         c.insets = new Insets(5, 10, 10, 10);
         gb.setConstraints(NestedaggregationButton, c);
         contentPane.add(NestedaggregationButton);
-
-        showContentsButton.addActionListener(this);
 
         showLakesButton.addActionListener(this);
         showConnectsToButton.addActionListener(this);
@@ -323,7 +322,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void handleNestedAggregationQuery() {
         delegate.peformNestedAggregation();
-
+    }
     public void showJoinWindow() {
         JLabel selectLabel = new JLabel("SELECT: ");
         JLabel remainderLabel = new JLabel("<html>FROM              Trail t, Lake l, Connects_to ct" +

@@ -94,7 +94,7 @@ public class TrailManager implements LoginWindowDelegate, TrailOperationsDelegat
     public void peformNestedAggregation() {
         String result = dbHandler.performNestedAggregation();
         operationsWindow.displayNestedAggregateResults(result);
-
+    }
     public void trailOperationsFinished() {
         dbHandler.close();
         dbHandler = null;

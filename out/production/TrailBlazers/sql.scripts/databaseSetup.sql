@@ -13,12 +13,12 @@ INSERT INTO trail VALUES (3, "Bear", 4, 5.2, 500);
 
 CREATE TABLE lake (
     lake_name varchar2(20) not null PRIMARY KEY,
-    swimmable bool,
+    swimmable int,
 );
 
-INSERT INTO lake VALUES ("Great Bear Lake", true);
-INSERT INTO lake VALUES ("Williams Lake", true);
-INSERT INTO lake VALUES ("Ontario", false);
+INSERT INTO lake VALUES ("Great Bear Lake", 1);
+INSERT INTO lake VALUES ("Williams Lake", 1);
+INSERT INTO lake VALUES ("Ontario", 0);
 
 CREATE TABLE connects_to (
       trail_id integer not null,
