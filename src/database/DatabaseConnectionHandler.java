@@ -357,12 +357,12 @@ public class DatabaseConnectionHandler {
                         column = column.replace("t.", "");
                         column = column.replace("l.", "");
                         resultInt = rs.getInt(column);
-                        resultString += ", " + column + ": " + resultInt;
+                        resultString +=  column + ": " + resultInt + ", ";
                     }
                     else if (column.equals("t.trail_distance") || column.equals("t.trail_elevation_gain")) {
                         column = column.replace("t.", "");
                         resultDouble = rs.getDouble(column);
-                        resultString += " " + column + ": " + resultDouble + " ";
+                        resultString += " " + column + ": " + resultDouble + ", ";
                     }
                     else if (column.equals("t.trail_name") || column.equals("l.lake_name") ||
                             column.equals("ct.trail_name") || column.equals("ct.lake_name")) {
@@ -370,7 +370,7 @@ public class DatabaseConnectionHandler {
                         column = column.replace("t.", "");
                         column = column.replace("l.", "");
                         tempResultStr = rs.getString(column);
-                        resultString += ", " + column + ": " + tempResultStr;
+                        resultString += " " + column + ": " + tempResultStr + ", ";
                     }
                 }
                 result.add(resultString);

@@ -24,8 +24,8 @@ CREATE TABLE connects_to (
       trail_id integer not null,
       lake_name varchar2(20) not null,
       PRIMARY KEY (trail_id, lake_name),
-      FOREIGN KEY (lake_name) references lake,
-      FOREIGN KEY (trail_id) references trail
+      CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name) ON DELETE CASCADE,
+      CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id) ON DELETE CASCADE
 );
 
 INSERT INTO connects_to VALUES (1, "Great Bear Lake");
