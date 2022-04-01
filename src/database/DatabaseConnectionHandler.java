@@ -82,8 +82,8 @@ public class DatabaseConnectionHandler {
             statement.executeUpdate("CREATE TABLE connects_to " +
                     "(trail_id integer not null, lake_name varchar2(20) not null, " +
                     "PRIMARY KEY (trail_id, lake_name)," +
-                    "CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name)," +
-                    "CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id))");
+                    "CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name) ON DELETE CASCADE," +
+                    "CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id) ON DELETE CASCADE)");
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +107,7 @@ public class DatabaseConnectionHandler {
         ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
 
         insertTrail(trail1);
->
+
         insertTrail(trail2);
         insertTrail(trail3);
 

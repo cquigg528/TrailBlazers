@@ -150,8 +150,6 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(NestedaggregationButton, c);
         contentPane.add(NestedaggregationButton);
 
-        showContentsButton.addActionListener(this);
-
         showLakesButton.addActionListener(this);
         showConnectsToButton.addActionListener(this);
         showTrailsButton.addActionListener(this);
@@ -235,10 +233,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         searchButton.addActionListener(this);
 
 
-        String[] selectFields = {"*", "difficulty", "distance", "elevation gain"};
-        String[] whereFields = {"difficulty", "distance", "elevation gain"};
+        String[] selectFields = {"*", "difficulty", "distance", "elevation_gain"};
+        String[] whereFields = {"difficulty", "distance", "elevation_gain"};
 
-        String[] comparators = {">", ">=", "==", "!=", "<", "<="};
+        String[] comparators = {">", ">=", "=", "!=", "<", "<="};
         fieldsDropDownSelect = new JComboBox<String>(selectFields);
         fieldsDropDownWhere = new JComboBox<String>(whereFields);
         comparatorDropDown = new JComboBox<String>(comparators);
@@ -323,6 +321,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void handleNestedAggregationQuery() {
         delegate.peformNestedAggregation();
+    }
 
     public void showJoinWindow() {
         JLabel selectLabel = new JLabel("SELECT: ");
