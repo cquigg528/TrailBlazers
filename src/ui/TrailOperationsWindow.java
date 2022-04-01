@@ -293,11 +293,11 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
     public void showJoinWindow() {
         JLabel selectLabel = new JLabel("SELECT: ");
-        JLabel remainderLabel = new JLabel("<html>FROM              Trail, Lake, Connects_to" +
+        JLabel remainderLabel = new JLabel("<html>FROM              Trail t, Lake l, Connects_to ct" +
                 "<br/><br/>WHERE             swimmable = 1</html>");
         JLabel header = new JLabel("Perform a query over the trails that are connected to swimmable lakes:");
-        JLabel selectOptions = new JLabel("<html>Enter one or more of: trail_id, " +
-                "trail_name, trail_difficulty, trail_distance,<br/> trail_elevation_gain, lake_name, swimmable</html>");
+        JLabel selectOptions = new JLabel("<html>Enter one or more of: t.trail_id, ct.trail_id " +
+                "t.trail_name, t.trail_difficulty,<br/> t.trail_distance, t.trail_elevation_gain, ct.lake_name, l.lake_name,<br/> l.swimmable</html>");
 
         selectEntryField = new JTextField(20);
 

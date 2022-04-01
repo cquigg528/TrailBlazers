@@ -330,7 +330,7 @@ public class DatabaseConnectionHandler {
                     else if (column.equals("t.trail_distance") || column.equals("t.trail_elevation_gain")) {
                         column = column.replace("t.", "");
                         resultDouble = rs.getDouble(column);
-                        resultString += " " + column + ": " + resultDouble + ", ";
+                        resultString += " " + column + ": " + resultDouble + " ";
                     }
                     else if (column.equals("t.trail_name") || column.equals("l.lake_name") ||
                             column.equals("ct.trail_name") || column.equals("ct.lake_name")) {
