@@ -334,13 +334,14 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    public ArrayList<String> performJoinSearch(String selection) {
+    public ArrayList<String> performJoinSearch(String selection, String where) {
 
         ArrayList<String> result = new ArrayList<>();
 
         String[] columns = selection.split("[,]", 0);
         System.out.println(selection);
-        String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name";
+        String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE " + where;
+//        l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name
         int resultInt;
         double resultDouble;
         String tempResultStr;
