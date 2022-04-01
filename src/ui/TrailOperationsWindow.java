@@ -19,14 +19,12 @@ import java.util.ArrayList;
 public class TrailOperationsWindow extends JFrame implements ActionListener {
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
-    private static final int INVALID_INPUT = Integer.MIN_VALUE;
     private static final int EMPTY_INPUT = 0;
 
     private BufferedReader bufferedReader = null;
     private TrailOperationsDelegate delegate = null;
 
     JButton showLakesButton;
-    JButton showContentButton;
     JButton showConnectsToButton;
     JButton showTrailsButton;
     JButton deleteTrailButton;
