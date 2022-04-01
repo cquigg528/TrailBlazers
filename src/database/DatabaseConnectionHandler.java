@@ -23,6 +23,7 @@ public class DatabaseConnectionHandler {
     private static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1522:stu";
     private static final String EXCEPTION_TAG = "[EXCEPTION]";
     private static final String WARNING_TAG = "[WARNING]";
+    public int result = 0;
 
     private Connection connection = null;
 
@@ -89,6 +90,7 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
 
+
         TrailModel trail1 = new TrailModel(1, "Eagle Trail", 12.5, 3,
                 1200);
         TrailModel trail2 = new TrailModel(2, "Lighthouse Trail", 4.3, 6,
@@ -105,6 +107,7 @@ public class DatabaseConnectionHandler {
         ConnectsToModel connects3 = new ConnectsToModel(3, "Ontario");
 
         insertTrail(trail1);
+>
         insertTrail(trail2);
         insertTrail(trail3);
 
@@ -115,6 +118,15 @@ public class DatabaseConnectionHandler {
         insertConnectsTo(connects1);
         insertConnectsTo(connects2);
         insertConnectsTo(connects3);
+
+        TrailModel trail4 = new TrailModel(4, "Rattlesnake Trail", 4.3, 1, 500);
+        insertTrail(trail4);
+
+        TrailModel trail5 = new TrailModel(5, "Rattle Trail", 4.3, 2, 1500);
+        insertTrail(trail5);
+
+        TrailModel trail6 = new TrailModel(6, "Rat Trail", 4.3, 2, 500);
+        insertTrail(trail6);
 
     }
 
@@ -477,5 +489,43 @@ public class DatabaseConnectionHandler {
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
+    }
+
+    public String performAggregation() {
+        ResultSet rs = null;
+        Double result1 = 0.0;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(trail_distance) as MD FROM trail");
+            rs = ps.executeQuery();
+            rs.next();
+            result1 = rs.getDouble("MD");
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result1.toString();
+    }
+
+    public String performNestedAggregation() {
+        ResultSet rs = null;
+        String result_string = "";
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT MAX(t0.trail_difficulty) as TD FROM trail t0 GROUP BY t0.trail_difficulty " +
+                    "HAVING MAX(t0.trail_elevation_gain) <= all (SELECT MAX(t1.trail_elevation_gain) FROM trail t1 GROUP BY t1.trail_difficulty)");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                result = rs.getInt("TD");
+                result_string += ", " + String.valueOf(result);
+            }
+            connection.commit();
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return result_string;
+
     }
 }

@@ -31,6 +31,8 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     JButton deleteTrailButton;
     JButton selectButton;
     JButton joinButton;
+    JButton aggregationButton;
+    JButton NestedaggregationButton;
 
     JLabel deleteTrailLabel;
     JTextField deleteTrailIdField;
@@ -39,6 +41,7 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
     private JComboBox<String> comparatorDropDown;
     private JTextField conditionInput;
     private JTextField selectEntryField;
+
 
     public TrailOperationsWindow() {
         super("Trailblazers");
@@ -69,6 +72,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         deleteTrailIdField = new JTextField(10);
 
         selectButton = new JButton("Perform a projection or selection");
+
+        aggregationButton = new JButton("Perform a simple aggregation query");
+        NestedaggregationButton = new JButton("Perform a nested aggregation query");
+
         joinButton = new JButton("Perform a query using join");
 
 
@@ -130,12 +137,30 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
         gb.setConstraints(joinButton, c);
         contentPane.add(joinButton);
 
+
+        // place aggregation button
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(aggregationButton, c);
+        contentPane.add(aggregationButton);
+
+        // place Nested aggregation button
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(5, 10, 10, 10);
+        gb.setConstraints(NestedaggregationButton, c);
+        contentPane.add(NestedaggregationButton);
+
+        showContentsButton.addActionListener(this);
+
         showLakesButton.addActionListener(this);
         showConnectsToButton.addActionListener(this);
         showTrailsButton.addActionListener(this);
+
         deleteTrailButton.addActionListener(this);
         selectButton.addActionListener(this);
         joinButton.addActionListener(this);
+        aggregationButton.addActionListener(this);
+        NestedaggregationButton.addActionListener(this);
 
         // anonymous inner class for closing the window
         this.addWindowListener(new WindowAdapter() {
@@ -196,6 +221,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             int trailId = Integer.parseInt(input);
             delegate.deleteTrail(trailId);
         }
+    }
+
+    public void handleAggregationquery() {
+        delegate.performAggregation();
     }
 
     public void showSelectionWindow() {
@@ -290,6 +319,10 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
 
         delegate.performSelection(selectAttribute, whereAttribute, comparator, value);
     }
+
+
+    public void handleNestedAggregationQuery() {
+        delegate.peformNestedAggregation();
 
     public void showJoinWindow() {
         JLabel selectLabel = new JLabel("SELECT: ");
@@ -412,10 +445,37 @@ public class TrailOperationsWindow extends JFrame implements ActionListener {
             case "Search":
                 handleJoinSearch();
                 break;
+            case "Perform a simple aggregation query":
+
+                handleAggregationquery();
+                break;
+            case "Perform a nested aggregation query":
+                handleNestedAggregationQuery();
+                break;
             default:
                 break;
         }
     }
 
-
+    public void displayAggregateResults(String result) {
+        JFrame dialogueFrame = new JFrame("Search Results");
+        JOptionPane.showMessageDialog(dialogueFrame, "Query: " +
+                "\n SELECT MAX(trail_distance) " +
+                "\n FROM trail" +
+                "\n\n Result: " +
+                "\nThe longest distance of any trail is: "+ result);
+    }
+    public void displayNestedAggregateResults(String result) {
+        JFrame dialogueFrame = new JFrame("Search Results");
+        JOptionPane.showMessageDialog(dialogueFrame, "Query: " +
+                "\n" +
+                 "SELECT MAX(t0.trail_difficulty)" +
+                        "\n FROM trail t0 " +
+                        "\n GROUP BY t0.trail_difficulty" +
+                        "\n HAVING MAX(t0.trail_elevation_gain) <= all (SELECT MAX(t1.trail_elevation_gain) " +
+                        "\n\t\tFROM trail t1 " +
+                        "\n\t\tGROUP BY t1.trail_difficulty) " +
+                "\n\n Result: \n The highest difficulty rating(s) where the highest elevation gain" +
+                " is the minimum over all difficulties is/are: "+ result);
+    }
 }

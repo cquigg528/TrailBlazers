@@ -19,8 +19,13 @@ public interface TrailOperationsDelegate {
     public ArrayList<String> showConnectionInfo();
 
     public void performSelection(String selectAttribute, String whereAttribute, String comparator, String value);
+
+    public void performAggregation();
+    public void peformNestedAggregation();
+
     public void performJoinSearch(String selection);
     public void trailOperationsFinished();
+
 
     // add selection, projection, join, nested aggregation baby
 
