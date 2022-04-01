@@ -82,8 +82,8 @@ public class DatabaseConnectionHandler {
             statement.executeUpdate("CREATE TABLE connects_to " +
                     "(trail_id integer not null, lake_name varchar2(20) not null, " +
                     "PRIMARY KEY (trail_id, lake_name)," +
-                    "CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name)," +
-                    "CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id))");
+                    "CONSTRAINT FK_lake_name FOREIGN KEY (lake_name) REFERENCES lake(lake_name) ON DELETE CASCADE," +
+                    "CONSTRAINT FK_trail_id FOREIGN KEY (trail_id) REFERENCES trail(trail_id) ON DELETE CASCADE)");
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -266,6 +266,7 @@ public class DatabaseConnectionHandler {
                                               String comparator, String value) {
 
         ArrayList<TrailModel> tempResult = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
 
         String prepend = "trail_";
 
@@ -280,28 +281,42 @@ public class DatabaseConnectionHandler {
 
         TrailModel model = null;
 
+        boolean selectAll = false;
+
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(sqlString);
 
             while (rs.next()) {
+                String resString = "";
                 switch (selectAttribute) {
                     case "*":
-                        System.out.println(sqlString);
+                        selectAll = true;
+
                         model = new TrailModel(rs.getInt("trail_id"),
                                 rs.getString("trail_name"),
                                 rs.getDouble("trail_distance"),
                                 rs.getInt("trail_difficulty"),
                                 rs.getDouble("trail_elevation_gain"));
                         break;
-//                    case "trail_difficulty":
-                        // !! TODO!!
-//                        Object difficultyColumn = rs.getInt("trail_difficulty");
+                    case "trail_difficulty":
+                        resString = "trail_difficulty: " + Integer.toString(rs.getInt("trail_difficulty"));
+                        break;
+                    case "trail_distance":
+                        resString = "trail_distance: " + Double.toString(rs.getDouble("trail_distance"));
+                        break;
+                    case "trail_elevation_gain":
+                        resString = "trail_elevation_gain: " + Double.toString(rs.getDouble("trail_elevation_gain"));
+                        break;
                     default:
                         break;
                 }
 
-                tempResult.add(model);
+                if (selectAll) {
+                    tempResult.add(model);
+                } else {
+                    result.add(resString);
+                }
             }
 
             System.out.println(("Trail model: " + tempResult));
@@ -312,16 +327,21 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
-        return translateTrailModelsToStrings(tempResult);
+        if (selectAll) {
+            return translateTrailModelsToStrings(tempResult);
+        } else {
+            return result;
+        }
     }
 
-    public ArrayList<String> performJoinSearch(String selection) {
+    public ArrayList<String> performJoinSearch(String selection, String where) {
 
         ArrayList<String> result = new ArrayList<>();
 
         String[] columns = selection.split("[,]", 0);
         System.out.println(selection);
-        String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name";
+        String sqlString = "SELECT DISTINCT " + selection  + " FROM trail t, connects_to ct, lake l WHERE " + where;
+//        l.swimmable = 1 AND t.trail_id = ct.trail_id AND ct.lake_name = l.lake_name
         int resultInt;
         double resultDouble;
         String tempResultStr;

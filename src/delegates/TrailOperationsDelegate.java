@@ -23,7 +23,7 @@ public interface TrailOperationsDelegate {
     public void performAggregation();
     public void peformNestedAggregation();
 
-    public void performJoinSearch(String selection);
+    public void performJoinSearch(String selection, String where);
     public void trailOperationsFinished();
 
 
